@@ -9,6 +9,7 @@ Professional Python Discord music bot for Anime Cloud.
 - Interactive control buttons
 - YouTube search and URL playback through yt-dlp + FFmpeg
 - Reconnect-safe FFmpeg streaming and structured logging
+- Optional **24/7 voice mode** through `voice24.py`
 
 ## Install (Ubuntu 22.04/24.04)
 ```bash
@@ -27,7 +28,26 @@ python bot.py
 DISCORD_TOKEN=your_bot_token
 GUILD_ID=your_server_id
 LOG_LEVEL=INFO
+
+VOICE_CHANNEL_ID=your_voice_channel_id
+AUTO_JOIN_VC=true
+KEEP_ALIVE=true
 ```
+
+## Enable 24/7 voice mode
+`voice24.py` is a drop-in reconnect manager. Import it in the same process as your existing bot; do not create a second Discord login.
+
+```python
+from voice24 import Voice24Manager
+
+voice24 = Voice24Manager(bot, on_reconnect=on_voice_reconnect)
+
+@bot.event
+async def on_ready():
+    await voice24.start()
+```
+
+For autoplay integration, define `on_voice_reconnect(guild)` to call your existing guild playback/queue function when appropriate. Keep exactly one `bot.run()` call.
 
 Enable the bot's **Connect**, **Speak**, **View Channel**, and **Send Messages** permissions. Keep the token private.
 
